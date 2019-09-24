@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.edu.mapper.EmpMapper">
+
+    <resultMap id="empMap" type="Emp">
+        <id column="emp_id" property="empId"/>
+        <result column="name" property="name"/>
+        <result column="age" property="age"/>
+        <result column="sex" property="sex"/>
+        <result column="salary" property="salary"/>
+        <result column="dept_id" property="deptId"/>
+    </resultMap>
+
+    <resultMap id="empDeptMap" type="Emp">
+        <id column="emp_id" property="empId"/>
+        <result column="name" property="name"/>
+        <result column="age" property="age"/>
+        <result column="sex" property="sex"/>
+        <result column="salary" property="salary"/>
+        <result column="did" property="deptId"/>
+        <association property="dept" javaType="Dept">
+            <id column="did" property="deptId"/>
+            <result column="dname" property="dname"/>
+            <result column="location" property="location"/>
+        </association>
+    </resultMap>
+
+    <select id="listEmp" resultMap="empMap">
+        select <include refid="allcolumn"/> from t_emp
+    </select>
+    <sql id="allcolumn">
+        emp_id,name,age,sex,salary,dept_id
+    </sql>
+
+
+    <select id="listEmpDept" resultMap="empDeptMap">
+       select emp_id,name,age,sex,salary,e.dept_id did,dname,location from t_emp e left join t_dept d on e.dept_id = d.dept_id
+    </select>
+
+    <insert id="saveEmp">
+        insert into t_emp (name,age,sex,salary,dept_id) values (#{name},#{age},#{sex},#{salary},#{deptId})
+    </insert>
+
+    <delete id="deleteEmpById">
+        delete from t_emp where emp_id = #{id}
+    </delete>
+
+    <select id="getEmpById" resultMap="empDeptMap">
+         select emp_id,name,age,sex,salary,e.dept_id did,dname,location
+         from t_emp e left join t_dept d on e.dept_id = d.dept_id where emp_id = #{id}
+    </select>
+
+    <update id="updateEmpById">
+        update t_emp set name = #{name},age = #{age},sex = #{sex},salary = #{salary},dept_id = #{deptId} where emp_id = #{empId}
+    </update>
+
+</mapper>
